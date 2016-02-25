@@ -20,8 +20,8 @@ namespace DiffractionFormsApplication.Forms
         /// </summary>
         private Camera _cam;
 
-        private Bitmap _temporaryFrame = new Bitmap(1, 1);
-        private Bitmap _frame = new Bitmap(1, 1);;
+        private Bitmap _tmpBitmap = new Bitmap(1, 1);
+        private Bitmap _displayBitmap = new Bitmap(1, 1);
 
         private Object _bmpLock = new Object();
         
@@ -38,6 +38,30 @@ namespace DiffractionFormsApplication.Forms
             _cam?.Exit();
         }
 
+        public void OnEventFrame(object sender, EventArgs e)
+        {
+            uc480.Camera camera = sender as uc480.Camera;
+
+            if (camera == null) return;
+
+            int s32MemId;
+            camera.Memory.GetActive(out s32MemId);
+            camera.Memory.ToBitmap(s32MemId, out _tmpBitmap);
+
+            Crosshair.DrawCrosshair(ref _tmpBitmap);
+            Crosshair.DrawCrosshair(ref _tmpBitmap, 50, 120);
+
+            lock (_bmpLock)
+            {
+                _displayBitmap.Dispose();
+                _displayBitmap = new Bitmap(_tmpBitmap);
+            }
+
+            camera.Memory.Unlock(s32MemId);
+            DisplayWindow.Invalidate();
+
+        }
+
         public void DisplayWindow_Paint(object sender, PaintEventArgs e)
         {
             lock (_bmpLock)
@@ -48,37 +72,9 @@ namespace DiffractionFormsApplication.Forms
                     //control is very large
                     //e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 
-                    e.Graphics.DrawImage(_frame, DisplayWindow.ClientRectangle);
+                    e.Graphics.DrawImage(_displayBitmap, DisplayWindow.ClientRectangle);
                 }
             }
-        }
-
-        public void OnEventFrame(object sender, EventArgs e)
-        {
-            uc480.Camera camera = sender as uc480.Camera;
-
-            if (camera == null) return;
-
-            int s32MemId;
-            camera.Memory.GetActive(out s32MemId);
-            camera.Memory.ToBitmap(s32MemId, out _temporaryFrame);
-
-
-
-            Crosshair crosshair = new Crosshair(_temporaryFrame);
-
-            lock (_bmpLock)
-            {
-                _temporaryFrame.Dispose();
-                _temporaryFrame = new Bitmap(crosshair.FinalFrameBitmap);
-                _frame.Dispose();
-                _frame = new Bitmap(_temporaryFrame);
-                _temporaryFrame.Dispose();
-            }
-
-            camera.Memory.Unlock(s32MemId);
-            DisplayWindow.Invalidate();
-
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -91,8 +87,8 @@ namespace DiffractionFormsApplication.Forms
             Debug.WriteLine(e);
             /*lock (_bmpLock)
             {
-                var g = Graphics.FromImage(_temporaryFrame);
-                g.DrawLine(Pens.Red, _temporaryFrame.Width / 2, 0, _temporaryFrame.Width/2, _temporaryFrame.Height);
+                var g = Graphics.FromImage(_tmpBitmap);
+                g.DrawLine(Pens.Red, _tmpBitmap.Width / 2, 0, _tmpBitmap.Width/2, _tmpBitmap.Height);
             }*/
         }
 

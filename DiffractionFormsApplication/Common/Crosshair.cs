@@ -7,29 +7,22 @@ using System.Threading.Tasks;
 
 namespace DiffractionFormsApplication.Common
 {
-    class Crosshair
+    static class Crosshair
     {
-        private Bitmap _temporaryFrame;
-        public Bitmap FinalFrameBitmap;
-
-        public Crosshair(Bitmap temporaryFrame)
+        public static void DrawCrosshair(ref Bitmap image)
         {
-            _temporaryFrame = temporaryFrame;
-            var g = Graphics.FromImage(_temporaryFrame);
-            g.DrawLine(Pens.Red, _temporaryFrame.Width / 2, 0, _temporaryFrame.Width / 2, _temporaryFrame.Height);
-            g.DrawLine(Pens.Red, 0, _temporaryFrame.Height / 2, _temporaryFrame.Width, _temporaryFrame.Height / 2);
-            FinalFrameBitmap = new Bitmap(_temporaryFrame);
-            _temporaryFrame.Dispose();
+            var g = Graphics.FromImage(image);
+            // Draw Vertical Line
+            g.DrawLine(Pens.Red, image.Width / 2, 0, image.Width / 2, image.Height);
+            // Draw Horizontal Line
+            g.DrawLine(Pens.Red, 0, image.Height / 2, image.Width, image.Height / 2);
         }
 
-        public Crosshair(Bitmap temporaryFrame, int x, int y)
+        public static void DrawCrosshair(ref Bitmap image, int x, int y)
         {
-            _temporaryFrame = temporaryFrame;
-            var g = Graphics.FromImage(_temporaryFrame);
-            g.DrawLine(Pens.Red, _temporaryFrame.Width / 2, 0, _temporaryFrame.Width / 2, _temporaryFrame.Height);
-            g.DrawLine(Pens.Red, 0, _temporaryFrame.Height / 2, _temporaryFrame.Width, _temporaryFrame.Height / 2);
-            FinalFrameBitmap = new Bitmap(_temporaryFrame);
-            _temporaryFrame.Dispose();
+            var g = Graphics.FromImage(image);
+            g.DrawLine(Pens.Red, x, 0, x, image.Height);
+            g.DrawLine(Pens.Red, 0, y, image.Width, y);
         }
     }
 }
