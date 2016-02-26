@@ -24,6 +24,8 @@ namespace DiffractionFormsApplication.Forms
         private Bitmap _displayBitmap = new Bitmap(1, 1);
 
         private Object _bmpLock = new Object();
+
+        private int cursorXPos, cursorYPos;
         
 
         public MainForm()
@@ -48,8 +50,8 @@ namespace DiffractionFormsApplication.Forms
             camera.Memory.GetActive(out s32MemId);
             camera.Memory.ToBitmap(s32MemId, out _tmpBitmap);
 
-            Crosshair.DrawCrosshair(ref _tmpBitmap);
-            Crosshair.DrawCrosshair(ref _tmpBitmap, 50, 120);
+            //Crosshair.DrawCrosshair(ref _tmpBitmap);
+            Crosshair.DrawCrosshair(ref _tmpBitmap, cursorXPos, cursorYPos);
 
             lock (_bmpLock)
             {
@@ -82,16 +84,6 @@ namespace DiffractionFormsApplication.Forms
 
         }
 
-        private void DisplayWindow_MouseEnter(object sender, EventArgs e)
-        {
-            Debug.WriteLine(e);
-            /*lock (_bmpLock)
-            {
-                var g = Graphics.FromImage(_tmpBitmap);
-                g.DrawLine(Pens.Red, _tmpBitmap.Width / 2, 0, _tmpBitmap.Width/2, _tmpBitmap.Height);
-            }*/
-        }
-
         /// <summary>
         /// Lance l'acquisition
         /// </summary>
@@ -110,6 +102,26 @@ namespace DiffractionFormsApplication.Forms
         private void StopCaptureButton_Click(object sender, EventArgs e)
         {
             this._cam?.StopCapture(); // Eq: if(this._cam != null) { }
+        }
+
+        private void DisplayWindow_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void DisplayWindow_MouseHover(object sender, EventArgs e)
+        {
+            Debug.WriteLine(sender);
+            
+        }
+
+        private void DisplayWindow_MouseMove(object sender, MouseEventArgs e)
+        {
+            lock (_bmpLock)
+            {
+                this.cursorXPos = e.X;
+                this.cursorYPos = e.Y;
+            }
         }
 
         /// <summary>
