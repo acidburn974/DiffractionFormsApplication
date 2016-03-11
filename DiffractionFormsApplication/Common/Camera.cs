@@ -21,7 +21,6 @@ namespace DiffractionFormsApplication.Common
         public Bitmap TemporaryFrame = new Bitmap(1280, 1024);
         // Image final à afficher
         public Bitmap Frame = new Bitmap(1280, 1024);
-        internal object _temporaryFrame;
 
         public Camera()
         {
