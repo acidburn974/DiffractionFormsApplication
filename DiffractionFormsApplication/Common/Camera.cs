@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -12,19 +13,15 @@ namespace DiffractionFormsApplication.Common
     class Camera
     {
         public uc480.Camera Cam;
-
+        public uint FrameCount = 0;
         public bool IsLive { get; private set; } = false;
-
-        private object _bmpLock = new Object();
-
-        // Image temporaire de la caméra à traiter
-        public Bitmap TemporaryFrame = new Bitmap(1280, 1024);
-        // Image final à afficher
-        public Bitmap Frame = new Bitmap(1280, 1024);
+        public object FrameLocker = new Object();
+        public Bitmap Frame = new Bitmap(1, 1);
 
         public Camera()
         {
             InitCamera();
+            //Cam.EventFrame += OnEventFrame;
         }
 
         /// <summary>
@@ -64,28 +61,27 @@ namespace DiffractionFormsApplication.Common
                 IsLive = true;
             }
 
-            //Cam.EventFrame += OnFrameEvent;
         }
 
-        /*public void OnFrameEvent(object sender, EventArgs e)
+        public void OnEventFrame(object sender, EventArgs e)
         {
-            uc480.Camera camera = sender as uc480.Camera;
+            FrameCount++;
+        }
 
-            if (camera != null)
+        /*public void OnEventFrame(object sender, EventArgs e)
+        {
+            uc480.Camera Camera = sender as uc480.Camera;
+
+            Int32 s32MemId;
+            Camera.Memory.GetActive(out s32MemId);
+            Camera.Memory.Lock(s32MemId);
+            Camera.Memory.ToBitmap(s32MemId, out _frame);
+            lock (FrameLocker)
             {
-                int s32MemId;
-                camera.Memory.GetActive(out s32MemId);
-                camera.Memory.ToBitmap(s32MemId, out TemporaryFrame);
-
-                lock (TemporaryFrame)
-                {
-                    Frame.Dispose();
-                    Frame = new Bitmap(TemporaryFrame);
-                }
-
-                camera.Memory.Unlock(s32MemId);
-                
+                Frame = (Bitmap) _frame.Clone();
             }
+            FrameCount++;
+            Camera.Memory.Unlock(s32MemId);
         }*/
 
         /// <summary>

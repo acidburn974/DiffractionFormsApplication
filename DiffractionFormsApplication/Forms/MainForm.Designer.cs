@@ -37,22 +37,18 @@
             this.DisplayWindow.Cursor = System.Windows.Forms.Cursors.Default;
             this.DisplayWindow.Location = new System.Drawing.Point(12, 12);
             this.DisplayWindow.Name = "DisplayWindow";
-            this.DisplayWindow.Size = new System.Drawing.Size(1280, 1024);
+            this.DisplayWindow.Size = new System.Drawing.Size(640, 512);
             this.DisplayWindow.TabIndex = 0;
             this.DisplayWindow.TabStop = false;
-            this.DisplayWindow.Click += new System.EventHandler(this.DisplayWindow_Click);
-            this.DisplayWindow.Paint += new System.Windows.Forms.PaintEventHandler(this.DisplayWindow_Paint);
-            this.DisplayWindow.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DisplayWindow_MouseMove);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(586, 492);
+            this.ClientSize = new System.Drawing.Size(664, 543);
             this.Controls.Add(this.DisplayWindow);
             this.Name = "MainForm";
-            this.Text = "MainForm";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_Closing);
+            this.Text = "Camera";
             this.Load += new System.EventHandler(this.MainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.DisplayWindow)).EndInit();
             this.ResumeLayout(false);
