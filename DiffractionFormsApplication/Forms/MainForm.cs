@@ -30,7 +30,6 @@ namespace DiffractionFormsApplication.Forms
         public MainForm()
         {
             InitializeComponent();
-
             Camera.Cam.EventFrame += OnEventFrame;
 
             _resfreshDisplayThread = new Thread(RefreshDisplayWork);
@@ -90,6 +89,10 @@ namespace DiffractionFormsApplication.Forms
             Trace.WriteLine("Y Position:" + me.Y * ratioY);
         }
 
+        /// <summary>
+        /// Définit le message 
+        /// </summary>
+        /// <param name="temporaryBitmap"></param>
         public void SetDisplayImage(Bitmap temporaryBitmap)
         {
             lock (_locker)
