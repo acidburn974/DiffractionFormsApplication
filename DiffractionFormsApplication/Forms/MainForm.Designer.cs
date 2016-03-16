@@ -34,10 +34,14 @@
             // 
             // DisplayWindow
             // 
+            this.DisplayWindow.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.DisplayWindow.Cursor = System.Windows.Forms.Cursors.Default;
             this.DisplayWindow.Location = new System.Drawing.Point(12, 12);
             this.DisplayWindow.Name = "DisplayWindow";
-            this.DisplayWindow.Size = new System.Drawing.Size(640, 512);
+            this.DisplayWindow.Size = new System.Drawing.Size(640, 519);
+            this.DisplayWindow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.DisplayWindow.TabIndex = 0;
             this.DisplayWindow.TabStop = false;
             // 
