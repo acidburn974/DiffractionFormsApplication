@@ -23,7 +23,7 @@ namespace DiffractionFormsApplication.Forms
 
             Form actionsForm = new ActionsForm();
             actionsForm.MdiParent = this;
-            //actionsForm.Show();
+            actionsForm.Show();
         }
 
         private void OpenFile(object sender, EventArgs e)

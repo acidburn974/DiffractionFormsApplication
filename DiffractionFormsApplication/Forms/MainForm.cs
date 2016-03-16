@@ -18,7 +18,7 @@ namespace DiffractionFormsApplication.Forms
         /// <summary>
         /// Object instancié de la classe caméra
         /// </summary>
-        private Camera _cam;
+        private Object _locker = new Object();
 
         public Bitmap TemporaryFrame = new Bitmap(1, 1);
         public Bitmap Frame = new Bitmap(1280, 1024);
@@ -26,28 +26,12 @@ namespace DiffractionFormsApplication.Forms
         public uint FrameCount = 0;
 
         private Thread _resfreshDisplayThread;
-        
 
         public MainForm()
         {
             InitializeComponent();
 
-            /*if (this.DisplayWindow.Image == null)
-            {
-                using (Graphics g = Graphics.FromImage(Frame))
-                {
-                    g.FillRectangle(Brushes.Green, 0, 0, Frame.Width, Frame.Height);
-                    using (Font myFont = new Font("Arial", 14))
-                    {
-                        g.DrawString("Camera not loaded yet", myFont, Brushes.Blue, new Point(Frame.Width / 2, Frame.Height / 2));
-                    }
-                }
-                
-                DisplayWindow.Refresh();
-            }*/
-
-            _cam = new Camera();
-            _cam.Cam.EventFrame += OnEventFrame;
+            Camera.Cam.EventFrame += OnEventFrame;
 
             _resfreshDisplayThread = new Thread(RefreshDisplayWork);
             _resfreshDisplayThread.Start();
@@ -60,47 +44,59 @@ namespace DiffractionFormsApplication.Forms
 
         public void OnEventFrame(object sender, EventArgs e)
         {
-            uc480.Camera Camera = sender as uc480.Camera;
+            uc480.Camera camera = sender as uc480.Camera;
 
-            Int32 s32MemId;
-            Camera.Memory.GetActive(out s32MemId);
-            Camera.Memory.Lock(s32MemId);
-            Camera.Memory.ToBitmap(s32MemId, out TemporaryFrame);
-            lock (_cam.FrameLocker)
+            if (camera != null)
             {
-                //Frame = (Bitmap) TemporaryFrame.Clone();
-                this.DisplayWindow.Image = TemporaryFrame;
+                Int32 s32MemId;
+                camera.Memory.GetActive(out s32MemId);
+                camera.Memory.Lock(s32MemId);
+                camera.Memory.ToBitmap(s32MemId, out TemporaryFrame);
+                SetDisplayImage(TemporaryFrame);
+                camera.Memory.Unlock(s32MemId);
             }
-            Camera.Memory.Unlock(s32MemId);
         }
 
         public void RefreshDisplayWork()
         {
-            if (this.InvokeRequired)
+            lock (_locker)
             {
-                this.Invoke((MethodInvoker)delegate ()
+                DisplayWindow.Image = Camera.Frame;
+                if (this.InvokeRequired)
+                {
+                    this.Invoke((MethodInvoker)delegate ()
+                    {
+                        //this.DisplayWindow.Image = Frame;
+                        this.DisplayWindow.Refresh();
+                    });
+                }
+                else
                 {
                     //this.DisplayWindow.Image = Frame;
                     this.DisplayWindow.Refresh();
-                });
-            }
-            else
-            {
-                //this.DisplayWindow.Image = Frame;
-                this.DisplayWindow.Refresh();
+                }
             }
         }
 
         private void DisplayWindow_Click(object sender, EventArgs e)
         {
             // Image.Width / ClientSize.Width
-            float ratioX = (float)DisplayWindow.Image.Width/DisplayWindow.ClientSize.Width;
+            float ratioX = DisplayWindow.Image.Width/DisplayWindow.ClientSize.Width;
             // ClientSize.Height / Image.Height
-            float ratioY = (float) DisplayWindow.ClientSize.Height/DisplayWindow.Image.Height;
+            float ratioY = (float)DisplayWindow.Image.Height/DisplayWindow.ClientSize.Height;
 
             MouseEventArgs me = (MouseEventArgs)e;
             Trace.WriteLine("X Position:" + me.X * ratioX);
             Trace.WriteLine("Y Position:" + me.Y * ratioY);
+        }
+
+        public void SetDisplayImage(Bitmap temporaryBitmap)
+        {
+            lock (_locker)
+            {
+                Frame = temporaryBitmap;
+                DisplayWindow.Image = Frame;
+            }
         }
     }
 }

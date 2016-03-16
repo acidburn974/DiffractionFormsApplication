@@ -10,15 +10,14 @@ using DiffractionFormsApplication.Forms;
 
 namespace DiffractionFormsApplication.Common
 {
-    class Camera
+    static class Camera
     {
-        public uc480.Camera Cam;
-        public uint FrameCount = 0;
-        public bool IsLive { get; private set; } = false;
-        public object FrameLocker = new Object();
-        public Bitmap Frame = new Bitmap(1, 1);
+        public static uc480.Camera Cam;
+        public static uint FrameCount = 0;
+        public static bool IsLive { get; private set; } = false;
+        public static Bitmap Frame = new Bitmap(1, 1);
 
-        public Camera()
+        static Camera()
         {
             InitCamera();
             //Cam.EventFrame += OnEventFrame;
@@ -27,7 +26,7 @@ namespace DiffractionFormsApplication.Common
         /// <summary>
         /// Initialise la caméra
         /// </summary>
-        public void InitCamera()
+        public static void InitCamera()
         {
             Cam = new uc480.Camera(); //Use only the empty constructor, the one with cameraID has a bug
 
@@ -63,31 +62,15 @@ namespace DiffractionFormsApplication.Common
 
         }
 
-        public void OnEventFrame(object sender, EventArgs e)
+        public static void OnEventFrame(object sender, EventArgs e)
         {
             FrameCount++;
         }
 
-        /*public void OnEventFrame(object sender, EventArgs e)
-        {
-            uc480.Camera Camera = sender as uc480.Camera;
-
-            Int32 s32MemId;
-            Camera.Memory.GetActive(out s32MemId);
-            Camera.Memory.Lock(s32MemId);
-            Camera.Memory.ToBitmap(s32MemId, out _frame);
-            lock (FrameLocker)
-            {
-                Frame = (Bitmap) _frame.Clone();
-            }
-            FrameCount++;
-            Camera.Memory.Unlock(s32MemId);
-        }*/
-
         /// <summary>
         /// Démarre la capture
         /// </summary>
-        public void StartCapture()
+        public static void StartCapture()
         {
             if (Cam.Acquisition.Capture() == uc480.Defines.Status.SUCCESS)
             {
@@ -98,7 +81,7 @@ namespace DiffractionFormsApplication.Common
         /// <summary>
         /// Freeze la capture
         /// </summary>
-        public void PauseCapture()
+        public static void PauseCapture()
         {
             if (Cam.Acquisition.Freeze() == uc480.Defines.Status.SUCCESS)
             {
@@ -109,7 +92,7 @@ namespace DiffractionFormsApplication.Common
         /// <summary>
         /// Stop la capture
         /// </summary>
-        public void StopCapture()
+        public static void StopCapture()
         {
             if (Cam.Acquisition.Stop() == uc480.Defines.Status.SUCCESS)
             {
@@ -117,9 +100,9 @@ namespace DiffractionFormsApplication.Common
             }
         }
 
-        public void Exit()
+        public static void Exit()
         {
-            this.Cam.Exit();
+            Cam.Exit();
             IsLive = false;
         }
     }

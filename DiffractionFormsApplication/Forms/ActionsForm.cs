@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DiffractionFormsApplication.Common;
 
 namespace DiffractionFormsApplication.Forms
 {
@@ -19,17 +20,17 @@ namespace DiffractionFormsApplication.Forms
 
         private void playButton_Click(object sender, EventArgs e)
         {
-
+            Camera.StartCapture();
         }
 
         private void pauseButton_Click(object sender, EventArgs e)
         {
-
+            Camera.PauseCapture();
         }
 
         private void stopButton_Click(object sender, EventArgs e)
         {
-
+            Camera.StopCapture();
         }
     }
 }
