@@ -15,9 +15,15 @@ namespace DiffractionFormsApplication.Forms
         public MDIParent()
         {
             InitializeComponent();
+
+            // Image de la camera
             Form imageForm = new MainForm();
             imageForm.MdiParent = this;
             imageForm.Show();
+
+            Form actionsForm = new ActionsForm();
+            actionsForm.MdiParent = this;
+            //actionsForm.Show();
         }
 
         private void OpenFile(object sender, EventArgs e)

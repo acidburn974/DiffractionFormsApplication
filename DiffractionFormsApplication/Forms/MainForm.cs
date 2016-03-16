@@ -90,5 +90,17 @@ namespace DiffractionFormsApplication.Forms
                 this.DisplayWindow.Refresh();
             }
         }
+
+        private void DisplayWindow_Click(object sender, EventArgs e)
+        {
+            // Image.Width / ClientSize.Width
+            float ratioX = (float)DisplayWindow.Image.Width/DisplayWindow.ClientSize.Width;
+            // ClientSize.Height / Image.Height
+            float ratioY = (float) DisplayWindow.ClientSize.Height/DisplayWindow.Image.Height;
+
+            MouseEventArgs me = (MouseEventArgs)e;
+            Trace.WriteLine("X Position:" + me.X * ratioX);
+            Trace.WriteLine("Y Position:" + me.Y * ratioY);
+        }
     }
 }
