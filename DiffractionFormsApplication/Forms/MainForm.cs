@@ -22,59 +22,32 @@ namespace DiffractionFormsApplication.Forms
 
         public Bitmap TemporaryFrame = new Bitmap(1, 1);
         public Bitmap Frame = new Bitmap(1280, 1024);
-
         public uint FrameCount = 0;
-
         private Thread _resfreshDisplayThread;
+        private System.Windows.Forms.Timer _displayTimer;
+
+        public uint CursorXPos;
+        public uint CursorYPos;
 
         public MainForm()
         {
             InitializeComponent();
-            Camera.Cam.EventFrame += OnEventFrame;
 
             _resfreshDisplayThread = new Thread(RefreshDisplayWork);
             _resfreshDisplayThread.Start();
-        }
 
+            _displayTimer = new System.Windows.Forms.Timer();
+            _displayTimer.Tick += new EventHandler(delegate(object sender, EventArgs e)
+            {
+                SetDisplayImage();
+            });
+            _displayTimer.Interval = 100;
+            _displayTimer.Start();
+        }
+            
         private void MainForm_Load(object sender, EventArgs e)
         {
 
-        }
-
-        public void OnEventFrame(object sender, EventArgs e)
-        {
-            uc480.Camera camera = sender as uc480.Camera;
-
-            if (camera != null)
-            {
-                Int32 s32MemId;
-                camera.Memory.GetActive(out s32MemId);
-                camera.Memory.Lock(s32MemId);
-                camera.Memory.ToBitmap(s32MemId, out TemporaryFrame);
-                SetDisplayImage(TemporaryFrame);
-                camera.Memory.Unlock(s32MemId);
-            }
-        }
-
-        public void RefreshDisplayWork()
-        {
-            lock (_locker)
-            {
-                DisplayWindow.Image = Camera.Frame;
-                if (this.InvokeRequired)
-                {
-                    this.Invoke((MethodInvoker)delegate ()
-                    {
-                        //this.DisplayWindow.Image = Frame;
-                        this.DisplayWindow.Refresh();
-                    });
-                }
-                else
-                {
-                    //this.DisplayWindow.Image = Frame;
-                    this.DisplayWindow.Refresh();
-                }
-            }
         }
 
         private void DisplayWindow_Click(object sender, EventArgs e)
@@ -87,18 +60,44 @@ namespace DiffractionFormsApplication.Forms
             MouseEventArgs me = (MouseEventArgs)e;
             Trace.WriteLine("X Position:" + me.X * ratioX);
             Trace.WriteLine("Y Position:" + me.Y * ratioY);
+
+            CursorXPos = (uint) (me.X*ratioX);
+            CursorYPos = (uint) (me.Y*ratioY);
         }
 
-        /// <summary>
-        /// Définit le message 
-        /// </summary>
-        /// <param name="temporaryBitmap"></param>
-        public void SetDisplayImage(Bitmap temporaryBitmap)
+        public void RefreshDisplayWork()
+        {
+            Int32 s32MemId;
+            Camera.Cam.Memory.GetActive(out s32MemId);
+            Camera.Cam.Memory.Lock(s32MemId);
+            lock (_locker)
+            {
+                Camera.Cam.Memory.ToBitmap(s32MemId, out TemporaryFrame);
+            }
+            Camera.Cam.Memory.Unlock(s32MemId);
+        }
+
+        public void SetDisplayImage()
         {
             lock (_locker)
             {
-                Frame = temporaryBitmap;
-                DisplayWindow.Image = Frame;
+                Crosshair.DrawCrosshair(ref TemporaryFrame, CursorXPos, CursorYPos);
+                Frame = TemporaryFrame;
+            }
+
+            DisplayWindow.Image = Frame;
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate ()
+                {
+                    //this.DisplayWindow.Image = Frame;
+                    this.DisplayWindow.Refresh();
+                });
+            }
+            else
+            {
+                //this.DisplayWindow.Image = Frame;
+                this.DisplayWindow.Refresh();
             }
         }
     }
