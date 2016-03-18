@@ -18,7 +18,7 @@ namespace DiffractionFormsApplication.Common
             g.DrawLine(Pens.Red, 0, image.Height / 2, image.Width, image.Height / 2);
         }
 
-        public static void DrawCrosshair(ref Bitmap image, uint x, uint y)
+        public static void DrawCrosshair(ref Bitmap image, int x, int y)
         {
             using (Graphics g = Graphics.FromImage(image))
             {

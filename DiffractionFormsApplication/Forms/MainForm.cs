@@ -28,8 +28,8 @@ namespace DiffractionFormsApplication.Forms
         private System.Windows.Forms.Timer _displayTimer;
         private Thread _profilesThread;
 
-        public uint CursorXPos;
-        public uint CursorYPos;
+        public int CursorXPos;
+        public int CursorYPos;
 
         public MainForm()
         {
@@ -40,7 +40,7 @@ namespace DiffractionFormsApplication.Forms
 
             _displayTimer = new System.Windows.Forms.Timer();
             _displayTimer.Tick += new EventHandler(delegate(object sender, EventArgs e) { SetDisplayImage(); });
-            _displayTimer.Interval = 100;
+            _displayTimer.Interval = 300;
             _displayTimer.Start();
 
             _profilesThread = new Thread(RefreshProfile);
@@ -63,10 +63,13 @@ namespace DiffractionFormsApplication.Forms
             //Trace.WriteLine("X Position:" + me.X * ratioX);
             //Trace.WriteLine("Y Position:" + me.Y * ratioY);
 
-            CursorXPos = (uint) (me.X*ratioX);
-            CursorYPos = (uint) (me.Y*ratioY);
+            CursorXPos = (int) (me.X*ratioX);
+            CursorYPos = (int) (me.Y*ratioY);
         }
 
+        /// <summary>
+        /// Récupère l'image de la caméra et la met en mémoire pour traitement
+        /// </summary>
         public void RefreshDisplayWork()
         {
             Int32 s32MemId;
@@ -76,12 +79,16 @@ namespace DiffractionFormsApplication.Forms
             Camera.Cam.Memory.Unlock(s32MemId);
         }
 
+        /// <summary>
+        /// Applique les traitements sur l'image et affiche dans la picturebox
+        /// </summary>
         public void SetDisplayImage()
         {
             lock (_locker)
             {
                 Frame = TemporaryFrame;
-                Crosshair.DrawCrosshair(ref Frame, CursorXPos, CursorYPos);
+                //Crosshair.DrawCrosshair(ref Frame, CursorXPos, CursorYPos);
+                RefreshProfile();
                 DisplayWindow.Image = Frame;
             }
             
@@ -89,23 +96,18 @@ namespace DiffractionFormsApplication.Forms
             {
                 this.Invoke((MethodInvoker)delegate ()
                 {
-                    //this.DisplayWindow.Image = Frame;
                     this.DisplayWindow.Refresh();
                 });
             }
             else
             {
-                //this.DisplayWindow.Image = Frame;
                 this.DisplayWindow.Refresh();
             }
         }
 
         public void RefreshProfile()
         {
-            lock (_locker)
-            {
-                int[] xProfile = BitmapToData.BitmapToRawDataX(TemporaryFrame, CursorXPos, CursorYPos);
-            }
+            int[] xProfile = BitmapToData.GetXProfile(TemporaryFrame, CursorXPos, CursorYPos);
         }
     }
 }
