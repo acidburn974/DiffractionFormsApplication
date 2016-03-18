@@ -108,6 +108,7 @@ namespace DiffractionFormsApplication.Forms
         public void RefreshProfile()
         {
             int[] xProfile = BitmapToData.GetXProfile(TemporaryFrame, CursorXPos, CursorYPos);
+            int[] yProfile = BitmapToData.GetYProfile(TemporaryFrame, CursorXPos, CursorYPos);
         }
     }
 }
