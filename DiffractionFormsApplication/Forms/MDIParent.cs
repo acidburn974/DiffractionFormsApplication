@@ -7,23 +7,36 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DiffractionFormsApplication.Common;
 
 namespace DiffractionFormsApplication.Forms
 {
     public partial class MDIParent : Form
     {
+        private Form _imageForm;
+        private Form _actionsForm;
+        private Form _xProfileForm;
+        private Form _yProfileForm;
+
         public MDIParent()
         {
             InitializeComponent();
 
             // Image de la camera
-            Form imageForm = new MainForm();
-            imageForm.MdiParent = this;
-            imageForm.Show();
+            _imageForm = new MainForm {MdiParent = this};
+            _imageForm.Show();
 
-            Form actionsForm = new ActionsForm();
-            actionsForm.MdiParent = this;
-            actionsForm.Show();
+            // Fenêtre des actions
+            _actionsForm = new ActionsForm {MdiParent = this};
+            _actionsForm.Show();
+
+            // xProfile Form
+            _xProfileForm = new Histogram(Camera.xProfile) {MdiParent = this};
+            _xProfileForm.Show();
+
+            // yProfile Form
+            _yProfileForm = new Histogram(Camera.yProfile) {MdiParent = this};
+            _yProfileForm.Show();
         }
 
         private void OpenFile(object sender, EventArgs e)

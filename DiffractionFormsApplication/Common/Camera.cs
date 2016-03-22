@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DiffractionFormsApplication.Forms;
@@ -12,15 +13,37 @@ namespace DiffractionFormsApplication.Common
 {
     static class Camera
     {
+        public static Object Locker = new Object();
+
         public static uc480.Camera Cam;
         public static uint FrameCount = 0;
         public static bool IsLive { get; private set; } = false;
-        public static Bitmap Frame = new Bitmap(1, 1);
+
+        public static Bitmap TemporaryFrame = new Bitmap(1280, 1024);
+        public static Bitmap ProfileBitmap = new Bitmap(1280, 1024);
+        public static Bitmap Frame = new Bitmap(1280, 1024);
+
+        private static Thread _refreshFrameThread;
+        private static Thread _refreshProfileThread;
+
+        public static int CursorXPos;
+        public static int CursorYPos;
+
+        public static int[] xProfile;
+        public static int[] yProfile;
 
         static Camera()
         {
             InitCamera();
             //Cam.EventFrame += OnEventFrame;
+
+            // Lance le thread qui rafraichit l'image
+            _refreshFrameThread = new Thread(RefreshImageWork);
+            _refreshFrameThread.Start();
+
+            // Lance le thread
+            _refreshProfileThread = new Thread(RefreshProfileWork);
+            _refreshProfileThread.Start();
         }
 
         /// <summary>
@@ -65,6 +88,36 @@ namespace DiffractionFormsApplication.Common
         public static void OnEventFrame(object sender, EventArgs e)
         {
             FrameCount++;
+        }
+
+        /// <summary>
+        /// Rafraichit la 
+        /// </summary>
+        public static void RefreshImageWork()
+        {
+            int s32MemId;
+            Cam.Memory.GetActive(out s32MemId);
+            Cam.Memory.Lock(s32MemId);
+            Cam.Memory.ToBitmap(s32MemId, out TemporaryFrame);
+            Cam.Memory.Unlock(s32MemId);
+            lock (Locker)
+            {
+                Frame = TemporaryFrame;
+                ProfileBitmap = new Bitmap(TemporaryFrame);
+            }
+        }
+
+        /// <summary>
+        /// Rafraichit les profils en X et en Y
+        /// </summary>
+        public static void RefreshProfileWork()
+        {
+            if (IsLive)
+            {
+                xProfile = Profile.GetXProfile(ProfileBitmap, CursorXPos, CursorYPos);
+                yProfile = Profile.GetYProfile(ProfileBitmap, CursorXPos, CursorYPos);
+            } 
+            ProfileBitmap.Dispose();
         }
 
         /// <summary>

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DiffractionFormsApplication.Common
 {
-    static class BitmapToData
+    static class Profile
     {
         /// <summary>
         /// Récupère le profil horizontal de l'image

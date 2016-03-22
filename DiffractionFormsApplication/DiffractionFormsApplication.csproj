@@ -65,7 +65,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\BitmapToData.cs" />
+    <Compile Include="Common\Profile.cs" />
     <Compile Include="Common\Camera.cs" />
     <Compile Include="Common\Crosshair.cs" />
     <Compile Include="Common\Cursor.cs" />
@@ -74,6 +74,12 @@
     </Compile>
     <Compile Include="Forms\ActionsForm.Designer.cs">
       <DependentUpon>ActionsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Histogram.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Histogram.Designer.cs">
+      <DependentUpon>Histogram.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
@@ -91,6 +97,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Forms\ActionsForm.resx">
       <DependentUpon>ActionsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Histogram.resx">
+      <DependentUpon>Histogram.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

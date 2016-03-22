@@ -34,17 +34,11 @@ namespace DiffractionFormsApplication.Forms
         public MainForm()
         {
             InitializeComponent();
-
-            _resfreshDisplayThread = new Thread(RefreshDisplayWork);
-            _resfreshDisplayThread.Start();
-
             _displayTimer = new System.Windows.Forms.Timer();
             _displayTimer.Tick += new EventHandler(delegate(object sender, EventArgs e) { SetDisplayImage(); });
-            _displayTimer.Interval = 300;
+            _displayTimer.Interval = 50;
             _displayTimer.Start();
 
-            _profilesThread = new Thread(RefreshProfile);
-            _profilesThread.Start();
         }
             
         private void MainForm_Load(object sender, EventArgs e)
@@ -54,29 +48,15 @@ namespace DiffractionFormsApplication.Forms
 
         private void DisplayWindow_Click(object sender, EventArgs e)
         {
+            MouseEventArgs me = (MouseEventArgs)e;
+
             // Image.Width / ClientSize.Width
             float ratioX = DisplayWindow.Image.Width/DisplayWindow.ClientSize.Width;
             // ClientSize.Height / Image.Height
             float ratioY = (float)DisplayWindow.Image.Height/DisplayWindow.ClientSize.Height;
 
-            MouseEventArgs me = (MouseEventArgs)e;
-            //Trace.WriteLine("X Position:" + me.X * ratioX);
-            //Trace.WriteLine("Y Position:" + me.Y * ratioY);
-
             CursorXPos = (int) (me.X*ratioX);
             CursorYPos = (int) (me.Y*ratioY);
-        }
-
-        /// <summary>
-        /// Récupère l'image de la caméra et la met en mémoire pour traitement
-        /// </summary>
-        public void RefreshDisplayWork()
-        {
-            Int32 s32MemId;
-            Camera.Cam.Memory.GetActive(out s32MemId);
-            Camera.Cam.Memory.Lock(s32MemId);
-            Camera.Cam.Memory.ToBitmap(s32MemId, out TemporaryFrame);
-            Camera.Cam.Memory.Unlock(s32MemId);
         }
 
         /// <summary>
@@ -86,9 +66,8 @@ namespace DiffractionFormsApplication.Forms
         {
             lock (_locker)
             {
-                Frame = TemporaryFrame;
+                Frame = Camera.Frame;
                 //Crosshair.DrawCrosshair(ref Frame, CursorXPos, CursorYPos);
-                RefreshProfile();
                 DisplayWindow.Image = Frame;
             }
             
@@ -103,12 +82,6 @@ namespace DiffractionFormsApplication.Forms
             {
                 this.DisplayWindow.Refresh();
             }
-        }
-
-        public void RefreshProfile()
-        {
-            int[] xProfile = BitmapToData.GetXProfile(TemporaryFrame, CursorXPos, CursorYPos);
-            int[] yProfile = BitmapToData.GetYProfile(TemporaryFrame, CursorXPos, CursorYPos);
         }
     }
 }
