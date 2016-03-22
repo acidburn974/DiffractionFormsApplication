@@ -7,27 +7,42 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
+using DiffractionFormsApplication.Common;
+
+using OxyPlot;
+using OxyPlot.Axes;
+using OxyPlot.Series;
 
 namespace DiffractionFormsApplication.Forms
 {
     public partial class Histogram : Form
     {
-        public int[] DataProfile;
-        private Timer _chartTimer;
+        private string _profileName;
+        private int[] _profile;
+        private System.Windows.Forms.Timer _chartTimer;
+        private PlotModel _pm = new PlotModel()
+        {
+            PlotType = PlotType.Cartesian,
+            Background = OxyColors.White,
+            Axes =
+            {
+                new LinearAxis() { Position = AxisPosition.Bottom, Minimum = 0 },
+                new LinearAxis() { Position = AxisPosition.Left, Minimum = 0, Maximum = 255 }
+            }
+        };
+        private LineSeries _lineSeries = new LineSeries();
 
-
-
-
-        public Histogram(int[] dataProfile)
+        public Histogram(string profileName)
         {
             InitializeComponent();
-            this.DataProfile = dataProfile;
+            _profileName = profileName;
 
-            this.ProfileChart.DataSource = dataProfile;
+            _pm.Title = _profileName == "x" ? "Profil horizontal" : "Profil vertical";
 
             _chartTimer = new System.Windows.Forms.Timer();
             _chartTimer.Tick += new EventHandler(delegate (object sender, EventArgs e) { RefreshChart(); });
-            _chartTimer.Interval = 50;
+            _chartTimer.Interval = 200;
             _chartTimer.Start();
         }
 
@@ -40,17 +55,17 @@ namespace DiffractionFormsApplication.Forms
         /// </summary>
         private void RefreshChart()
         {
-            if (this.InvokeRequired)
+            _profile = _profileName == "x" ? Profile.GetXProfile(Camera.TemporaryFrame, Camera.CursorXPos, Camera.CursorYPos) : Profile.GetYProfile(Camera.TemporaryFrame, Camera.CursorXPos, Camera.CursorYPos);
+
+            _pm.Series.Clear();
+            _lineSeries.Points.Clear();
+            for (int i = 0; i < _profile.Length; i++)
             {
-                this.Invoke((MethodInvoker)delegate ()
-                {
-                    this.ProfileChart.Refresh();
-                });
+                _lineSeries.Points.Add(new OxyPlot.DataPoint(i + 1, _profile[i]));
             }
-            else
-            {
-                this.ProfileChart.Refresh();
-            }
+            _pm.Series.Add(_lineSeries);
+            plotProfile.Model = _pm;
+            plotProfile.Refresh();
         }
     }
 }

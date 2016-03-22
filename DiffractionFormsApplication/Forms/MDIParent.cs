@@ -30,12 +30,12 @@ namespace DiffractionFormsApplication.Forms
             _actionsForm = new ActionsForm {MdiParent = this};
             _actionsForm.Show();
 
-            // xProfile Form
-            _xProfileForm = new Histogram(Camera.xProfile) {MdiParent = this};
+            // XProfile Form
+            _xProfileForm = new Histogram("x") {MdiParent = this};
             _xProfileForm.Show();
 
-            // yProfile Form
-            _yProfileForm = new Histogram(Camera.yProfile) {MdiParent = this};
+            // YProfile Form
+            _yProfileForm = new Histogram("y") {MdiParent = this};
             _yProfileForm.Show();
         }
 

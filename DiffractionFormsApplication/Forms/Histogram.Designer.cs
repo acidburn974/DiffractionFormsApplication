@@ -1,4 +1,6 @@
-﻿namespace DiffractionFormsApplication.Forms
+﻿using OxyPlot.WindowsForms;
+
+namespace DiffractionFormsApplication.Forms
 {
     partial class Histogram
     {
@@ -6,6 +8,8 @@
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
+
+        private PlotView plotProfile;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -28,49 +32,31 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            this.ProfileChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            ((System.ComponentModel.ISupportInitialize)(this.ProfileChart)).BeginInit();
+            this.plotProfile = new OxyPlot.WindowsForms.PlotView();
             this.SuspendLayout();
             // 
-            // ProfileChart
+            // plotProfile
             // 
-            this.ProfileChart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea1.Name = "ChartArea1";
-            this.ProfileChart.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.ProfileChart.Legends.Add(legend1);
-            this.ProfileChart.Location = new System.Drawing.Point(12, 12);
-            this.ProfileChart.Name = "ProfileChart";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series1.Legend = "Legend1";
-            series1.Name = "Intensity";
-            this.ProfileChart.Series.Add(series1);
-            this.ProfileChart.Size = new System.Drawing.Size(520, 187);
-            this.ProfileChart.TabIndex = 0;
-            this.ProfileChart.Text = "Profil";
+            this.plotProfile.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.plotProfile.Location = new System.Drawing.Point(0, 0);
+            this.plotProfile.Margin = new System.Windows.Forms.Padding(0);
+            this.plotProfile.Name = "plotProfile";
+            this.plotProfile.Size = new System.Drawing.Size(632, 446);
+            this.plotProfile.TabIndex = 0;
             // 
             // Histogram
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(544, 211);
-            this.Controls.Add(this.ProfileChart);
+            this.Controls.Add(this.plotProfile);
             this.Name = "Histogram";
             this.Text = "Histogram";
             this.Load += new System.EventHandler(this.Histogram_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.ProfileChart)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.DataVisualization.Charting.Chart ProfileChart;
     }
 }

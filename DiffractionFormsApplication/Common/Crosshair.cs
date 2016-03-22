@@ -9,16 +9,7 @@ namespace DiffractionFormsApplication.Common
 {
     static class Crosshair
     {
-        public static void DrawCrosshair(ref Bitmap image)
-        {
-            var g = Graphics.FromImage(image);
-            // Draw Vertical Line
-            g.DrawLine(Pens.Red, image.Width / 2, 0, image.Width / 2, image.Height);
-            // Draw Horizontal Line
-            g.DrawLine(Pens.Red, 0, image.Height / 2, image.Width, image.Height / 2);
-        }
-
-        public static void DrawCrosshair(ref Bitmap image, int x, int y)
+        public static void DrawCrosshair(Bitmap image, int x, int y)
         {
             using (Graphics g = Graphics.FromImage(image))
             {

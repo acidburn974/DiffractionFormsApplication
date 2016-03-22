@@ -26,12 +26,9 @@ namespace DiffractionFormsApplication.Common
         private static Thread _refreshFrameThread;
         private static Thread _refreshProfileThread;
 
-        public static int CursorXPos;
-        public static int CursorYPos;
-
-        public static int[] xProfile;
-        public static int[] yProfile;
-
+        public static int CursorXPos = 1280/2;
+        public static int CursorYPos = 1024/2;
+        
         static Camera()
         {
             InitCamera();
@@ -40,10 +37,6 @@ namespace DiffractionFormsApplication.Common
             // Lance le thread qui rafraichit l'image
             _refreshFrameThread = new Thread(RefreshImageWork);
             _refreshFrameThread.Start();
-
-            // Lance le thread
-            _refreshProfileThread = new Thread(RefreshProfileWork);
-            _refreshProfileThread.Start();
         }
 
         /// <summary>
@@ -85,11 +78,6 @@ namespace DiffractionFormsApplication.Common
 
         }
 
-        public static void OnEventFrame(object sender, EventArgs e)
-        {
-            FrameCount++;
-        }
-
         /// <summary>
         /// Rafraichit la 
         /// </summary>
@@ -105,20 +93,10 @@ namespace DiffractionFormsApplication.Common
                 Frame = TemporaryFrame;
                 ProfileBitmap = new Bitmap(TemporaryFrame);
             }
+
+            Thread.Sleep(50);
         }
 
-        /// <summary>
-        /// Rafraichit les profils en X et en Y
-        /// </summary>
-        public static void RefreshProfileWork()
-        {
-            if (IsLive)
-            {
-                xProfile = Profile.GetXProfile(ProfileBitmap, CursorXPos, CursorYPos);
-                yProfile = Profile.GetYProfile(ProfileBitmap, CursorXPos, CursorYPos);
-            } 
-            ProfileBitmap.Dispose();
-        }
 
         /// <summary>
         /// Démarre la capture
